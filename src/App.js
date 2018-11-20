@@ -39,56 +39,38 @@ class App extends Component {
         type: '',
         pack: ''
     };
-    // handleSubmit = (e) => {
-    //     axios.post('http://localhost:4000/', {name: this.state.name})
-    //         .then(res => {
-    //             console.log(res.data)
-    //             this.setState({
-    //                 res: true,
-    //                 name2: res.data.name,
-    //                 id: res.data.id,
-    //                 cost: res.data.cost,
-    //                 cardClass: res.data.cardClass,
-    //                 flavor: res.data.flavor,
-    //                 rarity: res.data.rarity,
-    //                 type: res.data.type,
-    //                 pack: res.data.set,
-    //             })
-    //             if (res.data.flavor == null) {
-    //                 this.setState({
-    //                     flavor: '없음'
-    //                 })
-    //             }
-    //         })
-    // }
-    handleChange = async (e) => {
-        const idType = /([가-힣])/;
-        await this.setState({
+    handleSubmit = async (e) => {
+        await axios.post('http://localhost:4000/', {name: this.state.name})
+            .then(res => {
+                this.setState({
+                    res: true,
+                    name2: res.data.name,
+                    id: res.data.id,
+                    cost: res.data.cost,
+                    cardClass: res.data.cardClass,
+                    flavor: res.data.flavor,
+                    rarity: res.data.rarity,
+                    type: res.data.type,
+                    pack: res.data.set,
+                })
+                if (res.data.flavor == null) {
+                    this.setState({
+                        flavor: '없음'
+                    })
+                }
+            })
+    }
+
+    handleKeyPress = (e) => {
+        if(e.key === 'Enter') {
+            this.handleSubmit(e)
+        }
+    }
+
+    handleChange = (e) => {
+        this.setState({
             [e.target.name]: e.target.value
         })
-        if(idType.test(this.state.name)) {
-             axios.post('http://localhost:4000/', {name: this.state.name})
-                .then(res => {
-                    console.log(res.data)
-                    this.setState({
-                        res: true,
-                        name2: res.data.name,
-                        id: res.data.id,
-                        cost: res.data.cost,
-                        cardClass: res.data.cardClass,
-                        flavor: res.data.flavor,
-                        rarity: res.data.rarity,
-                        type: res.data.type,
-                        pack: res.data.set,
-                    })
-                    if (res.data.flavor == null) {
-                        this.setState({
-                            flavor: '없음'
-                        })
-                    }
-                })
-
-        }
     }
     render() {
         let photo = null;
@@ -120,10 +102,10 @@ class App extends Component {
         return (
             <Fragment>
             <GlobalStyles/>
-                <form style={{width: '80%', height: '25%', margin: 'auto', marginTop: '10px'}}>
-                    <Id type={'text'} placeholder={'카드이름'} name={'name'} onChange={this.handleChange}/>
-                    {/*<Send type={'submit'}>검색</Send>*/}
-                </form>
+                <div style={{width: '80%', height: '25%', margin: 'auto', marginTop: '10px'}}>
+                    <Id type={'text'} placeholder={'카드이름'} name={'name'} onChange={this.handleChange} onKeyPress={this.handleKeyPress}/>
+                    <Send  onClick={this.handleSubmit}>검색</Send>
+                </div>
                 <Info>
                     {photo}
                     {info}
